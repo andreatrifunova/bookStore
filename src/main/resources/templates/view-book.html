@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--
+Template Name: Skaxis
+Author: <a href="https://www.os-templates.com/">OS Templates</a>
+Author URI: https://www.os-templates.com/
+Licence: Free to use under our free template licence terms
+Licence URI: https://www.os-templates.com/template-terms
+-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<!-- To declare your language - read more here: https://www.w3.org/International/questions/qa-html-language-declarations -->
+<head>
+    <title>Bookstore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="../css/layout.css" rel="stylesheet" type="text/css" media="all">
+    <!-- JAVASCRIPTS -->
+    <script src="../js/jquery.min.js" type="text/javascript"></script>
+    <script src="../js/jquery.backtotop.js" type="text/javascript"></script>
+    <script src="../js/jquery.mobilemenu.js" type="text/javascript"></script>
+    <style type="text/css">
+        /* DEMO ONLY */
+        .container .demo{text-align:center;}
+        .container .demo div{padding:8px 0;}
+        .container .demo div:nth-child(odd){color:#FFFFFF; background:#CCCCCC;}
+        .container .demo div:nth-child(even){color:#FFFFFF; background:#979797;}
+        @media screen and (max-width:900px){.container .demo div{margin-bottom:0;}}
+        /* DEMO ONLY */
+    </style>
+</head>
+<body id="top">
+<!-- Top Background Image Wrapper -->
+<div class="bgded overlay light" style="background-image: url('../demo/birds.png')">
+    <div class="wrapper row1">
+        <header id="header" class="hoc clear">
+            <div id="logo" class="fl_left">
+                <h1><a href="home.html">Bookstore</a></h1>
+            </div>
+            <nav id="mainav" class="fl_right">
+                <ul class="clear">
+                    <li><a th:href="@{/home}">Дома</a></li>
+                    <li ><a th:href="@{/books}">Книги</a></li>
+                    <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/authors}">Автори</a> </li>
+                    <li class="active"><a th:href="@{/coupons}">Купони</a></li>
+                    <li><a th:href="@{/bundles}">Специјални понуди</a></li>
+                    <li><a th:href="@{/vote}">Гласај и добиј</a></li>
+                    <li><a th:href="@{/contact}">Контакт</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="#">
+                            <img src="../demo/avatar.png" width="10px" height="10px"/>
+                            <th:block th:if="${#request.remoteUser != null}"
+                                      th:text="${#request.remoteUser}"></th:block>
+                            <th:block th:if="${#request.remoteUser == null}"
+                                      th:text="Username"></th:block>
+                        </a>
+                    </li>
+                    <li  sec:authorize="isAuthenticated()">
+                        <a class="btn btn-success " href="/shopping-cart" >
+                            <i class="fa fa-shopping-basket"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"
+                        style="height: 5px; width: 80px">
+                        <a  href="/logout">
+                            </i> Logout
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a href="/login" style="color: #FF0000">
+                            <i></i> Login
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div id="breadcrumb" class="hoc clear">
+        <ul>
+            <li><a href="coupons">Купони</a></li>
+        </ul>
+    </div>
+</div>
+<div class="wrapper row3">
+    <main class="hoc container clear" style="background-image: url('../demo/birds.png')">
+        <!-- main body -->
+        <div class="content">
+            <h1 th:text="${book.getName()}" style="color: goldenrod"></h1>
+            <div class="group btmspace-50 demo"><div class="one_half first">
+            <img th:src="${book.getPicturePath()}" style="width: 300px; height:350px;display:inline;">
+            </div> <div class="one_half">
+                <p th:text="${book.getDescription()}" style="display:inline;width: 200px"></p><br/>
+            </div></div>
+            <h1 th:text="${book.getPrice() + ' денари'}"></h1>
+            <h2 th:text="${'Добивате вкупно ' + book.getCouponsForBook() + ' купони!'}" style="display: inline"></h2>
+            <hr/>
+            <strong>Имате можност првите неколку страни да ги добиете во пдф
+            форма бесплатно со само еден клик.</strong>
+            <a></a>
+            <br/>
+            <div>
+                <form th:action="@{'/delete/{id}' (id=${book.getId()})}" th:method="DELETE"
+                      sec:authorize="hasRole('ROLE_ADMIN')">
+                        <button type="submit" class="clickme" style="background: #FF0000;">
+                            <i>Избриши</i>
+                        </button>
+                    </form>
+                <br/>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{'/edit-form/{id}' (id=${book.getId()})}">
+                        <i class="clickme" style="background: green">Промени</i></a><br/>
+                </th:block>
+                  <br/>
+                <form th:action="@{'/shopping-cart/add-book/{id}' (id=${book.getId()})}"
+                      th:method="POST">
+                    <button type="submit" class="clickme" style="background: #3B5998;">
+                        <i>Додади во кошничка</i></button>
+                </form>
+            </div>
+        <br/><br/>
+            <a href="/books" style="color: #666666; border: #e38d00"; th:background="white">Врати се назад</a>
+            <div class="clear"></div>
+            <hr/>
+        </div></main></div>
+<div class="wrapper row4">
+    <footer id="footer" class="hoc clear">
+
+        <div class="one_quarter first">
+            <h6 class="heading">Контактирајте не</h6>
+            <ul class="nospace btmspace-30 linklist contact">
+                <li><i class="fa fa-map-marker"></i>
+                    <address>
+                        ул.Љубљанска, Општина Карпош
+                    </address>
+                </li>
+                <li><i class="fa fa-phone"></i> +0223-8965-3652</li>
+                <li><i class="fa fa-envelope-o"></i> bookstore@domain.com</li>
+            </ul>
+            <ul class="faico clear">
+                <li><a class="faicon-facebook" href="www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+                <li><a class="faicon-twitter" href="www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+                <li><a class="faicon-dribble" href="www.dribble.com"><i class="fa fa-dribbble"></i></a></li>
+                <li><a class="faicon-linkedin" href="www.linkedin.com"><i class="fa fa-linkedin"></i></a></li>
+            </ul>
+        </div>
+        <div class="one_quarter">
+            <h6 class="heading">Мени</h6>
+            <ul class="nospace linklist">
+                <li><a href="#">Дома</a></li>
+                <li><a href="#">Книги</a></li>
+                <li><a href="#">Купони</a></li>
+                <li><a href="#">Гласај и добиј</a></li>
+                <li><a href="#">Контакт</a></li>
+            </ul>
+        </div>
+        <div class="one_quarter">
+            <h6 class="heading">Twitter</h6>
+            <p>Станете дел од нашето големо семејство на Твитер.Биди и ти дел од нас!</p>
+            <a href="#">Follow me on Twitter(da dodadam nekoja pateka od tviter)
+                Treba pateki i dolu kaj yt,twiter,fb</a>
+        </div>
+    </footer>
+</div>
+
+<div class="wrapper row5">
+    <div id="copyright" class="hoc clear">
+        <p class="fl_left">Copyright &copy; 2018 - All Rights Reserved - <a href="#">Domain Name</a></p>
+        <p class="fl_right">Template by <a target="_blank" href="https://www.os-templates.com/" title="Free Website Templates">OS Templates</a></p>
+    </div>
+</div>
+
+<a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+Template Name: Skaxis
+Author: <a href="https://www.os-templates.com/">OS Templates</a>
+Author URI: https://www.os-templates.com/
+Licence: Free to use under our free template licence terms
+Licence URI: https://www.os-templates.com/template-terms
+-->
+<html lang="" xmlns:sec="http://www.w3.org/1999/xhtml">
+<!-- To declare your language - read more here: https://www.w3.org/International/questions/qa-html-language-declarations -->
+<head>
+    <title>Skaxis | Pages | Sidebar Left</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="../css/layout.css" rel="stylesheet" type="text/css" media="all">
+    <script src="../js/jquery.min.js" type="text/javascript"></script>
+    <script src="../js/jquery.backtotop.js" type="text/javascript"></script>
+    <script src="../js/jquery.mobilemenu.js" type="text/javascript"></script>
+</head>
+<body id="top">
+<!-- Top Background Image Wrapper -->
+<div class="bgded overlay light" style="background-image:url('birds.png');">
+    <div class="wrapper row1">
+        <header id="header" class="hoc clear">
+            <div id="logo" class="fl_left">
+                <h1><a href="home">Bookstore</a></h1>
+            </div>
+            <nav id="mainav" class="fl_right">
+                <ul class="clear">
+                    <li><a th:href="@{/home}">Дома</a></li>
+                    <li class="active"><a th:href="@{/books}">Книги</a></li>
+                    <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/authors}">Автори</a> </li>
+                    <li><a th:href="@{/coupons}">Купони</a></li>
+                    <li><a th:href="@{/bundles}">Специјални понуди</a></li>
+                    <li><a th:href="@{/vote}">Гласај и добиј</a></li>
+                    <li><a th:href="@{/contact}">Контакт</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="#">
+                            <img src="../demo/avatar.png" width="10px" height="10px"/>
+                            <th:block th:if="${#request.remoteUser != null}"
+                                      th:text="${#request.remoteUser}"></th:block>
+                            <th:block th:if="${#request.remoteUser == null}"
+                                      th:text="Username"></th:block>
+                        </a>
+                    </li>
+                    <li  sec:authorize="isAuthenticated()">
+                        <a class="btn btn-success " href="/shopping-cart" >
+                            <i class="fa fa-shopping-basket"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()"
+                        style="height: 5px; width: 80px">
+                        <a  href="/logout">
+                            </i> Logout
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a href="/login" style="color: #FF0000">
+                            <i></i> Login
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+    <div id="breadcrumb" class="hoc clear">
+        <ul>
+            <li><a href="home">Дома</a></li>
+            <li><a href="books">Книги</a></li>
+        </ul>
+    </div>
+</div>
+<div class="wrapper row3">
+    <main class="hoc container clear">
+        <!-- main body -->
+        <div class="content three_quarter">
+
+            <h1>Додади нова книга</h1>
+            <form th:method="POST" th:action="@{/add-book/upload}" th:object="${book}" enctype="multipart/form-data">
+                <input id="id" type="hidden" name="id" th:value="(${book} != null ? ${book.getId()} : '')">
+                <label>Име на книга</label>
+                <input type="text" name="bookName"
+                       th:value="(${book} != null ? ${book.getName()} : '')"
+                       required
+                       class="validate-email required input_field" />
+                <br/>
+                <label >Име и презиме на автор</label>
+                <select name="authorId" >
+                    <option th:if="${book} != null"
+                            th:selected="${book.getAuthor() != null &&
+                                book.getAuthor().getId() == author.getId()}"
+                            th:each="author : ${authors}"
+                            th:value="${author.getId()}"
+                            th:text="${author.getName() + ' ' + author.getSurname()}">
+                    </option>
+                    <option th:if="${book} == null"
+                            th:each="author : ${authors}"
+                            th:value="${author.getId()}"
+                            th:text="${author.getName()  + ' ' + author.getSurname()}">
+                    </option>
+                </select>
+                <br/>
+                <label >Издавачка куќа</label>
+                <input type="text" name="izdavac"
+                       th:value="(${book} != null ? ${book.getIzdavackaKukja()} : '')"
+                        />
+                <br/>
+                <label >Опис</label>
+                <textarea name="description"  th:text="(${book} != null ? ${book.getDescription()} : '')">
+                </textarea><br/>
+                <label >Жанр</label>
+                <input type="text" name="zanr"
+                       th:value="(${book} != null ? ${book.getZanr()} : '')"
+                        />
+                <br/>
+                <label >Цена (денари)</label>
+                <input type="number" name="cena"
+                       th:value="(${book} != null ? ${book.getPrice()} : '')"
+                       />
+                <br/>
+                <label >Купони</label>
+                <input type="number" name="coupons"
+                       th:value="(${book} != null ? ${book.getCouponsForBook()} : '')"
+                       />
+                <br/>
+                <label>Слика </label>
+                <input type="file" name="imageFile"
+                       th:value="(${book} != null ? ${book.getPicturePath()} : '')"
+                       accept="image/png, image/jpeg" />
+                <br/>
+                <input type="submit" name="Submit" value="Submit" class="more" />
+            </form>
+        </div>
+    </main>
+</div>
+<div class="wrapper bgded overlay coloured" style="background-image:url('clouds.png');">
+    <article class="hoc cta clear">
+    </article>
+</div>
+<div class="wrapper row5">
+    <div id="copyright" class="hoc clear">
+        <p class="fl_left">Copyright &copy; 2018 - All Rights Reserved - <a href="#">Domain Name</a></p>
+        <p class="fl_right">Template by <a target="_blank" href="https://www.os-templates.com/" title="Free Website Templates">OS Templates</a></p>
+    </div>
+</div>
+
+<a id="backtotop" href="#top"><i class="fa fa-chevron-up"></i></a>
+
+</body>
+</html>
